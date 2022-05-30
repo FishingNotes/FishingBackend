@@ -10,3 +10,4 @@ fun main() {
         configureSerialization()
     }.start(wait = true)
 }
+
