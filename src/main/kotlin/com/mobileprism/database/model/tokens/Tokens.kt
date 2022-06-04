@@ -37,4 +37,10 @@ object Tokens : UUIDTable("tokens") {
         }
     }
 
+    fun getUserByToken(token: String): UserDTO {
+        return transaction {
+            TokenDTO.find(Tokens.token.eq(token)).first().user
+        }
+    }
+
 }

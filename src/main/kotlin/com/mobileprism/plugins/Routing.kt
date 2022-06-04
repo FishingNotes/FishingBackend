@@ -1,10 +1,13 @@
 package com.mobileprism.plugins
 
+import com.mobileprism.database.features.catches.catchesRouting
+import com.mobileprism.database.features.login.loginRouting
+import com.mobileprism.database.features.catches.markersRouting
+import com.mobileprism.database.features.markers.markersRouting
+import com.mobileprism.database.features.register.registrationRouting
 import io.ktor.server.routing.*
-import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
-import io.ktor.server.request.*
 
 fun Application.configureRouting() {
 
@@ -12,5 +15,11 @@ fun Application.configureRouting() {
         get("/") {
             call.respondText("Hello World!")
         }
+
+        loginRouting()
+        registrationRouting()
+        markersRouting()
+        catchesRouting()
+
     }
 }
