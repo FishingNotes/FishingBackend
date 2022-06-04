@@ -1,8 +1,5 @@
 package com.mobileprism
 
-import com.mobileprism.database.features.login.configureLoginRouting
-import com.mobileprism.database.features.markers.configureMarkersRouting
-import com.mobileprism.database.features.register.configureRegisterRouting
 import io.ktor.server.engine.*
 import io.ktor.server.cio.*
 import com.mobileprism.plugins.*
@@ -20,9 +17,6 @@ fun main() {
 
     embeddedServer(CIO, port = 8080, host = "0.0.0.0") {
         install(CallLogging)
-        configureRegisterRouting()
-        configureLoginRouting()
-        configureMarkersRouting()
         configureRouting()
         configureSerialization()
     }.start(wait = true)
