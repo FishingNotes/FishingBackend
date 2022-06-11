@@ -47,7 +47,8 @@ suspend inline fun parameterUUIDRequired(call: ApplicationCall, parameter: Strin
     val receivedParameter: String = call.parameters[parameter]
         ?: return call.respond(status = HttpStatusCode.BadRequest, "Missing $parameter parameter")
 
-        runCatching { UUID.fromString(receivedParameter) }.onFailure {
+        runCatching { UUID.fromString(receivedParameter) }
+            .onFailure {
             call.respond(status = HttpStatusCode.NotAcceptable, "Invalid $parameter parameter")
             return
         }.onSuccess {
