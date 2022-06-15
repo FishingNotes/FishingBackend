@@ -1,5 +1,9 @@
 package com.mobileprism.database.model.users
 
+import com.mobileprism.database.model.markers.MarkerDTO.Companion.referrersOn
+import com.mobileprism.database.model.notes.MarkerNoteDTO
+import com.mobileprism.database.model.notes.MarkerNotes
+import com.mobileprism.database.model.tokens.Tokens
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.UUIDEntity
@@ -18,6 +22,8 @@ class UserDTO(id: EntityID<UUID>) : UUIDEntity(id) {
     internal var secondName by Users.secondName
     internal var email by Users.email
     internal var dateTimeRegistered by Users.dateTimeRegistered
+    internal var googleAuthId by Users.googleAuthId
+    internal var phoneNumber by Users.phoneNumber
 
     fun mapToUserResponse() = transaction {
         UserResponse(
@@ -32,7 +38,7 @@ class UserDTO(id: EntityID<UUID>) : UUIDEntity(id) {
 
 @Serializable
 data class UserResponse(
-    val login: String,
+    val login: String?,
     val firstName: String,
     val secondName: String,
     val email: String

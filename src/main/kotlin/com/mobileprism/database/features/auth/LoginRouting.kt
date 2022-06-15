@@ -4,8 +4,14 @@ import io.ktor.server.application.*
 import io.ktor.server.routing.*
 
 fun Routing.loginRouting() {
-
-    post("/login") {
-        LoginController().loginUser(call)
+    route("/login"){
+        post {
+            LoginController().login(call)
+        }
+        post("google") {
+            LoginController().loginWithGoogle(call)
+        }
     }
+
+
 }

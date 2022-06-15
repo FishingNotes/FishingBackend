@@ -5,7 +5,13 @@ import io.ktor.server.routing.*
 
 fun Routing.registrationRouting() {
 
-        post("/register") {
+    route("/register") {
+        post {
             RegisterController().registerNewUser(call)
         }
+        post("google") {
+            RegisterController().registerWithGoogle(call)
+        }
+    }
+
 }
