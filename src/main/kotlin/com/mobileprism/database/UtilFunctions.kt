@@ -1,4 +1,4 @@
-package com.mobileprism.database.features
+package com.mobileprism.database
 
 import com.mobileprism.database.model.tokens.Tokens
 import io.ktor.http.*
@@ -19,11 +19,11 @@ suspend inline fun validateToken(call: ApplicationCall, function: (token: String
     function(token)
 }
 
-suspend inline fun <reified T : Any> receiveModel(call: ApplicationCall): T {
+suspend inline fun <reified T : Any> ApplicationCall.receiveModel(): T {
     return try {
-        call.receive<T>(typeInfo<T>())
+        this.receive<T>(typeInfo<T>())
     } catch (e: java.lang.Exception) {
-        call.respond(HttpStatusCode.BadRequest, e.localizedMessage)
+        this.respond(HttpStatusCode.MethodNotAllowed, e.localizedMessage)
         throw e
     }
 
