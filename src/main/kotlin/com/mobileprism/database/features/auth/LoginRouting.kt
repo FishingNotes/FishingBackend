@@ -12,6 +12,4 @@ fun Routing.loginRouting() {
             LoginController().loginWithGoogle(call)
         }
     }
-
-
 }

@@ -9,7 +9,6 @@ import com.mobileprism.models.login.*
 import com.mobileprism.models.register.GoogleAuthRemote
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 
 
@@ -56,9 +55,10 @@ class LoginController {
         val googleLoginRemote = call.receiveModel<GoogleAuthRemote>()
         val userDTO = Users.getUserByGoogleAuthId(googleLoginRemote.googleAuthId)
 
+        //CheckByEmail todo:
+
         if (userDTO == null) {
-            call.respond(HttpStatusCode.NotFound)
-            return
+            return RegisterController().registerWithGoogle(call, googleLoginRemote)
         }
 
         val newToken = Tokens.createNewTokenForUser(userDTO)
