@@ -9,9 +9,6 @@ fun Routing.registrationRouting() {
         post {
             RegisterController().registerNewUser(call)
         }
-        post("google") {
-            RegisterController().registerWithGoogle(call)
-        }
     }
 
 }
