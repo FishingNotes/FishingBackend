@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 
 object Users : UUIDTable("users") {
     internal val email = varchar("email", 50)
-    internal val login = varchar("login", 20).nullable()
+    internal val login = varchar("login", 20)/*.nullable()*/
 
     internal val password = varchar("password", 100).nullable()
 
