@@ -9,7 +9,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import java.time.LocalDateTime
 import java.util.UUID
 
-object Markers : UUIDTable("markers") {
+object UserMarkers : UUIDTable("user_markers") {
     val user = reference("user", Users)
     val latitude = double("latitude")
     val longitude = double("longitude")
@@ -17,8 +17,9 @@ object Markers : UUIDTable("markers") {
     val description = varchar("description", 500)
     val markerColor = integer("marker_color")
     val datetimeCreated = datetime("datetime_created").default(LocalDateTime.now())
+    val datetimeChanged = datetime("datetime_changed").default(LocalDateTime.now())
     val visible = bool("is_visible")
-    val public = bool("is_public")
+    val private = bool("is_private")
 
     fun createNewMarker(currentUser: UserDTO, newMarkerRemote: NewMarkerRemote): MarkerDTO {
         return transaction {
@@ -30,14 +31,14 @@ object Markers : UUIDTable("markers") {
                 description = newMarkerRemote.description
                 markerColor = newMarkerRemote.markerColor
                 visible = newMarkerRemote.visible
-                public = newMarkerRemote.public
+                private = newMarkerRemote.private
             }
         }
     }
 
     fun getUserMarkers(currentUser: UserDTO): List<MarkerDTO> {
         return transaction {
-            MarkerDTO.find { Markers.user eq currentUser.id }.toList()
+            MarkerDTO.find { UserMarkers.user eq currentUser.id }.toList()
         }
     }
 
