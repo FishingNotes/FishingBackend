@@ -3,7 +3,7 @@ package com.mobileprism.database.features.notes
 import com.mobileprism.database.parameterUUIDRequired
 import com.mobileprism.database.receiveModel
 import com.mobileprism.database.validateToken
-import com.mobileprism.database.model.markers.Markers
+import com.mobileprism.database.model.markers.UserMarkers
 import com.mobileprism.database.model.notes.MarkerNotes
 import com.mobileprism.database.model.notes.NotesResponse
 import io.ktor.http.*
@@ -16,7 +16,7 @@ class MarkerNotesController {
         validateToken(call) {
             parameterUUIDRequired(call, "markerId") { markerId ->
                 val newNoteRemote = call.receiveModel<NewNoteRemote>()
-                val marker = Markers.getMarkerById(markerId)
+                val marker = UserMarkers.getMarkerById(markerId)
 
                 when (MarkerNotes.create(marker, newNoteRemote)) {
                     null -> call.respond(HttpStatusCode.NotFound)
@@ -40,7 +40,7 @@ class MarkerNotesController {
     suspend fun getMarkerNotes(call: ApplicationCall) {
         validateToken(call) {
             parameterUUIDRequired(call, "markerId") { markerId ->
-                when (val marker = Markers.getMarkerById(markerId)?.mapToMarkerResponse()) {
+                when (val marker = UserMarkers.getMarkerById(markerId)?.mapToMarkerResponse()) {
                     null -> call.respond(HttpStatusCode.NotFound)
                     else -> call.respond(NotesResponse(marker.notes))
                 }
