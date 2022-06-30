@@ -1,12 +1,6 @@
 package com.mobileprism.database.model.notes
 
 import com.mobileprism.database.model.markers.MarkerDTO
-import com.mobileprism.database.model.markers.MarkerResponse
-import com.mobileprism.database.model.markers.Markers
-import com.mobileprism.database.model.markers.Markers.reference
-import com.mobileprism.database.model.notes.MarkerNoteDTO.Companion.referrersOn
-import org.jetbrains.exposed.dao.IntEntity
-import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -20,6 +14,8 @@ class MarkerNoteDTO(id: EntityID<UUID>) : UUIDEntity(id) {
     internal var title by MarkerNotes.title
     internal var description by MarkerNotes.description
     private val datetimeCreated by MarkerNotes.datetimeCreated
+    private val datetimeChanged by MarkerNotes.datetimeChanged
+
     internal var marker by MarkerDTO referencedOn MarkerNotes.marker
 
 
@@ -29,6 +25,7 @@ class MarkerNoteDTO(id: EntityID<UUID>) : UUIDEntity(id) {
             title = title,
             description = description,
             datetimeCreated = datetimeCreated.toString(),
+            datetimeChanged = datetimeChanged.toString(),
             markerId = marker.id.value.toString()
         )
 }
@@ -39,6 +36,7 @@ data class NoteResponse(
     val title: String,
     val description: String,
     val datetimeCreated: String,
+    val datetimeChanged: String,
     val markerId: String,
 )
 
