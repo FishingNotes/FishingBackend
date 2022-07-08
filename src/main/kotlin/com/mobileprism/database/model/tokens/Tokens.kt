@@ -18,7 +18,7 @@ import java.util.*
 
 object Tokens : UUIDTable("tokens") {
     internal val token = varchar("token", 50)
-    internal val user = reference("user_FK", Users)
+    internal val user = reference("user", Users)
     internal val isActive = bool("is_active").default(true)
     internal val datetimeCreated = datetime("datetime_created").default(LocalDateTime.now())
 
