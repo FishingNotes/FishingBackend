@@ -1,6 +1,8 @@
 
 services:
   web:
+    volumes:
+      - ./tmp/images:/images
     build: .
     ports:
       - "8080:8080"
