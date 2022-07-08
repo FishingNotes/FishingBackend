@@ -16,13 +16,13 @@ class RegisterController {
     suspend fun registerNewUser(call: ApplicationCall) {
         val registerRemote = call.receiveModel<RegisterRemote>()
 
-        val userDTOemail = Users.getUserByLogin(registerRemote.email)?.email
+        val userDTO = Users.getUserByEmail(registerRemote.email)
 
         when {
             /*userDTOlogin == registerRemote.login -> {
                 call.respond(HttpStatusCode.Conflict, "User with the same login is already registered")
             }*/
-            userDTOemail == registerRemote.email -> {
+            userDTO != null -> {
                 call.respond(HttpStatusCode.Conflict, "User with the same email is already registered")
             }
             else -> {
@@ -37,14 +37,14 @@ class RegisterController {
     suspend fun registerWithGoogle(call: ApplicationCall, registerRemote: GoogleAuthRemote) {
 
         val userDTOgoogleAuthId = Users.getUserByGoogleAuthId(googleAuthId = registerRemote.googleAuthId)?.googleAuthId
-        val userDTOemail = Users.getUserByEmail(email = registerRemote.email)?.email
+        val userDTOemail = Users.getUserByEmail(email = registerRemote.email)
 
         when {
             userDTOgoogleAuthId == registerRemote.googleAuthId -> {
                 //call.respond(HttpStatusCode.Conflict, "User with the same login is already registered")
                 LoginController().loginWithGoogle(call)
             }
-            userDTOemail == registerRemote.email -> {
+            userDTOemail != null -> {
                 call.respond(HttpStatusCode.Conflict, "User with the same email is already registered but google id is null")
             }
             else -> {
