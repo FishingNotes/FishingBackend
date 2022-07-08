@@ -4,18 +4,14 @@ import at.favre.lib.crypto.bcrypt.BCrypt
 import com.mobileprism.models.register.GoogleAuthRemote
 import com.mobileprism.models.register.RegisterRemote
 import org.jetbrains.exposed.dao.id.UUIDTable
-import org.jetbrains.exposed.sql.Table
-import org.jetbrains.exposed.sql.insert
-import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.javatime.datetime
-import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
-import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.random.Random
 
 object Users : UUIDTable("users") {
     internal val email = varchar("email", 50)
-    internal val login = varchar("login", 20)/*.nullable()*/
+    internal val login = varchar("login", 20)
 
     internal val password = varchar("password", 100).nullable()
 
@@ -30,10 +26,23 @@ object Users : UUIDTable("users") {
     fun createNewUser(registerRemote: RegisterRemote): UserDTO {
         return transaction {
             UserDTO.new {
+                login = createLoginForUser()
                 password = BCrypt.withDefaults().hashToString(6, registerRemote.password.toCharArray())
                 email = registerRemote.email
             }
         }
+    }
+
+    private fun createLoginForUser(): String {
+        var newLogin: String
+        do {
+            newLogin = generateLogin()
+        } while (getUserByLogin(newLogin) != null)
+        return newLogin
+    }
+
+    private fun generateLogin(): String {
+        return "Fisher_" + Random.nextInt(10000, 999999)
     }
 
     fun createNewUser(googleAuthRemote: GoogleAuthRemote): UserDTO {
