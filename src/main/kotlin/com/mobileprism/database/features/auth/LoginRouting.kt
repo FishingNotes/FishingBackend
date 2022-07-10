@@ -11,5 +11,8 @@ fun Routing.loginRouting() {
         post("google") {
             LoginController().loginWithGoogle(call)
         }
+        post("restore") {
+            // TODO: 10.07.2022
+        }
     }
 }

@@ -55,14 +55,16 @@ class LoginController {
         val googleLoginRemote = call.receiveModel<GoogleAuthRemote>()
         val userDTO = Users.getUserByGoogleAuthId(googleLoginRemote.googleAuthId)
 
-        //CheckByEmail todo:
-
-        if (userDTO == null) {
-            return RegisterController().registerWithGoogle(call, googleLoginRemote)
+        when {
+            userDTO != null -> {
+                val newToken = Tokens.createNewTokenForUser(userDTO)
+                call.respond(LoginRemoteResponse(userDTO.mapToUserResponse(), newToken.token))
+            }
+            else -> {
+                RegisterController().registerWithGoogle(call, googleLoginRemote)
+            }
         }
 
-        val newToken = Tokens.createNewTokenForUser(userDTO)
-        call.respond(LoginRemoteResponse(userDTO.mapToUserResponse(), newToken.token))
     }
 
     suspend fun login(call: ApplicationCall) {
