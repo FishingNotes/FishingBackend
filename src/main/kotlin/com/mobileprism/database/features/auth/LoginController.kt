@@ -11,19 +11,18 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 
-
-
 class LoginController {
 
-    private suspend fun loginWithEmail(call: ApplicationCall, loginRemote: LoginRemote) {
-        val userDTO = Users.getUserByEmail(loginRemote.loginOrEmail)
+    suspend fun loginWithEmail(call: ApplicationCall) {
+        val loginRemoteEmail = call.receiveModel<LoginRemoteEmail>()
+        val userDTO = Users.getUserByEmail(loginRemoteEmail.email)
         if (userDTO == null) {
             call.respond(HttpStatusCode.NotFound)
             return
         }
 
         when {
-            BCrypt.verifyer().verify(loginRemote.password.toCharArray(), userDTO.password).verified -> {
+            BCrypt.verifyer().verify(loginRemoteEmail.password.toCharArray(), userDTO.password).verified -> {
                 val newToken = Tokens.createNewTokenForUser(userDTO)
                 call.respond(LoginRemoteResponse(userDTO.mapToUserResponse(), newToken.token))
             }
@@ -33,8 +32,10 @@ class LoginController {
         }
     }
 
-    private suspend fun loginWithUsername(call: ApplicationCall, loginRemote: LoginRemote) {
-        val userDTO = Users.getUserByLogin(loginRemote.loginOrEmail)
+    suspend fun loginWithUsername(call: ApplicationCall) {
+        val loginRemote = call.receiveModel<LoginRemoteUsername>()
+
+        val userDTO = Users.getUserByLogin(loginRemote.username)
         if (userDTO == null) {
             call.respond(HttpStatusCode.NotFound)
             return
@@ -46,7 +47,7 @@ class LoginController {
                 call.respond(LoginRemoteResponse(userDTO.mapToUserResponse(), newToken.token))
             }
             else -> {
-                call.respond(HttpStatusCode.ExpectationFailed, "Invalid login/password")
+                call.respond(HttpStatusCode.ExpectationFailed, "Invalid username/password")
             }
         }
     }
@@ -67,13 +68,4 @@ class LoginController {
 
     }
 
-    suspend fun login(call: ApplicationCall) {
-        val loginRemote = call.receiveModel<LoginRemote>()
-        when (loginRemote.loginOrEmail.isEmail) {
-            true -> {
-                loginWithEmail(call, loginRemote)
-            }
-            else -> loginWithUsername(call, loginRemote)
-        }
-    }
 }
