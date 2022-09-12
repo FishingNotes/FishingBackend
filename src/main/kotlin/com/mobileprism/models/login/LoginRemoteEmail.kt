@@ -1,6 +1,5 @@
 package com.mobileprism.models.login
 
-import com.mobileprism.database.model.users.UserDTO
 import com.mobileprism.database.model.users.UserResponse
 import kotlinx.serialization.Serializable
 
@@ -17,8 +16,15 @@ data class UsernameLoginRemote(
 )*/
 
 @Serializable
-data class LoginRemote(
-    val loginOrEmail: String,
+data class LoginRemoteEmail(
+    val email: String,
+    val password: String
+)
+// TODO: Change login routing with emailLogin
+
+@Serializable
+data class LoginRemoteUsername(
+    val username: String,
     val password: String
 )
 
