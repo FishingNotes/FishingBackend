@@ -3,18 +3,6 @@ package com.mobileprism.models.login
 import com.mobileprism.database.model.users.UserResponse
 import kotlinx.serialization.Serializable
 
-/*@Serializable
-data class EmailLoginRemote(
-    val email: String,
-    val password: String
-)
-
-@Serializable
-data class UsernameLoginRemote(
-    val login: String,
-    val password: String
-)*/
-
 @Serializable
 data class LoginRemoteEmail(
     val email: String,
@@ -26,6 +14,12 @@ data class LoginRemoteEmail(
 data class LoginRemoteUsername(
     val username: String,
     val password: String
+)
+
+@Serializable
+data class LoginRemoteRestore(
+    val login: String,
+    val newPassword: String,
 )
 
 @Serializable

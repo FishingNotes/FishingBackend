@@ -2,20 +2,27 @@ package com.mobileprism.database.features.auth
 
 import io.ktor.server.application.*
 import io.ktor.server.routing.*
+import org.koin.ktor.ext.inject
 
 fun Routing.loginRouting() {
+
+    val loginService by inject<LoginController>()
+
     route("/login"){
         post("username") {
-            LoginController().loginWithUsername(call)
+            loginService.loginWithUsername(call)
         }
         post("email") {
-            LoginController().loginWithEmail(call)
+            loginService.loginWithEmail(call)
         }
         post("google") {
-            LoginController().loginWithGoogle(call)
+            loginService.loginWithGoogle(call)
         }
+        /*post("search-account") {
+            loginService.searchForAccount(call)
+        }*/
         post("restore") {
-            // TODO: 10.07.2022
+            loginService.restorePassword(call)
         }
     }
 }

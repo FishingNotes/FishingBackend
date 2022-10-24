@@ -1,8 +1,10 @@
 package com.mobileprism.database.features.auth
 
-import at.favre.lib.crypto.bcrypt.BCrypt
 import com.mobileprism.database.model.tokens.Tokens
 import com.mobileprism.database.model.users.Users
+import com.mobileprism.database.model.utils.FishingCodes
+import com.mobileprism.database.model.utils.FishingResponse
+import com.mobileprism.database.model.utils.PasswordBCrypt
 import com.mobileprism.database.receiveModel
 import com.mobileprism.isEmail
 import com.mobileprism.models.login.*
@@ -10,24 +12,38 @@ import com.mobileprism.models.register.GoogleAuthRemote
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
+import org.jetbrains.exposed.sql.transactions.transaction
 
-class LoginController {
+class LoginController() {
 
     suspend fun loginWithEmail(call: ApplicationCall) {
         val loginRemoteEmail = call.receiveModel<LoginRemoteEmail>()
         val userDTO = Users.getUserByEmail(loginRemoteEmail.email)
         if (userDTO == null) {
-            call.respond(HttpStatusCode.NotFound)
+            call.respond(
+                FishingResponse(
+                    success = false,
+                    fishingCode = FishingCodes.INVALID_CREDENTIALS,
+                    httpCode = HttpStatusCode.ExpectationFailed.value
+                )
+            )
             return
         }
 
         when {
-            BCrypt.verifyer().verify(loginRemoteEmail.password.toCharArray(), userDTO.password).verified -> {
+            PasswordBCrypt.verifyPasswords(loginRemoteEmail.password.toCharArray(), userDTO.password) -> {
                 val newToken = Tokens.createNewTokenForUser(userDTO)
                 call.respond(LoginRemoteResponse(userDTO.mapToUserResponse(), newToken.token))
             }
+
             else -> {
-                call.respond(HttpStatusCode.ExpectationFailed, "Invalid email/password")
+                call.respond(
+                    FishingResponse(
+                        success = false,
+                        fishingCode = FishingCodes.INVALID_CREDENTIALS,
+                        httpCode = HttpStatusCode.ExpectationFailed.value
+                    )
+                )
             }
         }
     }
@@ -37,17 +53,30 @@ class LoginController {
 
         val userDTO = Users.getUserByLogin(loginRemote.username)
         if (userDTO == null) {
-            call.respond(HttpStatusCode.NotFound)
+            call.respond(
+                FishingResponse(
+                    success = false,
+                    fishingCode = FishingCodes.USERNAME_NOT_FOUND,
+                    httpCode = HttpStatusCode.NotFound.value
+                )
+            )
             return
         }
 
         when {
-            BCrypt.verifyer().verify(loginRemote.password.toCharArray(), userDTO.password).verified -> {
+            PasswordBCrypt.verifyPasswords(loginRemote.password.toCharArray(), userDTO.password) -> {
                 val newToken = Tokens.createNewTokenForUser(userDTO)
                 call.respond(LoginRemoteResponse(userDTO.mapToUserResponse(), newToken.token))
             }
+
             else -> {
-                call.respond(HttpStatusCode.ExpectationFailed, "Invalid username/password")
+                call.respond(
+                    FishingResponse(
+                        success = false,
+                        fishingCode = FishingCodes.INVALID_CREDENTIALS,
+                        httpCode = HttpStatusCode.ExpectationFailed.value
+                    ),
+                )
             }
         }
     }
@@ -61,10 +90,42 @@ class LoginController {
                 val newToken = Tokens.createNewTokenForUser(userDTO)
                 call.respond(LoginRemoteResponse(userDTO.mapToUserResponse(), newToken.token))
             }
+
             else -> {
                 RegisterController().registerWithGoogle(call, googleLoginRemote)
             }
         }
+
+    }
+
+    suspend fun restorePassword(call: ApplicationCall) {
+        val restoreRemote = call.receiveModel<LoginRemoteRestore>()
+
+        val userDTO =
+            if (restoreRemote.login.isEmail) Users.getUserByEmail(restoreRemote.login)
+            else Users.getUserByLogin(restoreRemote.login)
+
+        if (userDTO == null) {
+            call.respond(
+                FishingResponse(
+                    success = false,
+                    fishingCode = FishingCodes.USERNAME_NOT_FOUND,
+                    httpCode = HttpStatusCode.Accepted.value
+                )
+            )
+            return
+        }
+
+        //Set new password for user
+        transaction { userDTO.password = PasswordBCrypt.encrypt(restoreRemote.newPassword.toCharArray()) }
+        call.respond(
+            FishingResponse(
+                success = true,
+                fishingCode = FishingCodes.SUCCESS,
+                httpCode = HttpStatusCode.OK.value
+            )
+        )
+        return
 
     }
 

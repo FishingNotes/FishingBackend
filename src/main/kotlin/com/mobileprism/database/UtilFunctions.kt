@@ -1,6 +1,7 @@
 package com.mobileprism.database
 
 import com.mobileprism.database.model.tokens.Tokens
+import com.mobileprism.database.model.users.UserDTO
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -19,6 +20,18 @@ suspend inline fun validateToken(call: ApplicationCall, function: (token: String
     function(token)
 }
 
+suspend inline fun validateTokenWithUser(call: ApplicationCall, function: (token: String, user: UserDTO) -> Unit) {
+    val token = call.request.headers["Fishing-AUTH"]
+
+    if (token.isNullOrBlank() || Tokens.getToken(token)?.isActive != true) {
+        call.respond(HttpStatusCode.Forbidden, "Token $token is not valid")
+        return
+    }
+
+    val user = Tokens.getUserByToken(token)
+
+    function(token, user)
+}
 suspend inline fun <reified T : Any> ApplicationCall.receiveModel(): T {
     return try {
         this.receive<T>(typeInfo<T>())
