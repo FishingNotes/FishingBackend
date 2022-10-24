@@ -28,6 +28,12 @@ repositories {
 }
 
 dependencies {
+
+    //client
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("io.ktor:ktor-client-logging:$ktor_version")
+
     implementation("io.ktor:ktor-server-content-negotiation-jvm:$ktor_version")
     implementation("io.ktor:ktor-network-tls-certificates:$ktor_version")
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
@@ -42,6 +48,11 @@ dependencies {
 
     implementation("org.postgresql:postgresql:42.3.4")
     implementation("com.zaxxer:HikariCP:5.0.1")
+
+    // Koin for Ktor
+    implementation("io.insert-koin:koin-ktor:3.2.2")
+    implementation("io.insert-koin:koin-logger-slf4j:3.2.2")
+
 
     implementation("io.ktor:ktor-server-cio-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
