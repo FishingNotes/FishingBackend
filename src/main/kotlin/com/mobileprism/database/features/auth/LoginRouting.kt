@@ -18,9 +18,9 @@ fun Routing.loginRouting() {
         post("google") {
             loginService.loginWithGoogle(call)
         }
-        /*post("search-account") {
+        post("search-account") {
             loginService.searchForAccount(call)
-        }*/
+        }
         post("restore") {
             loginService.restorePassword(call)
         }
