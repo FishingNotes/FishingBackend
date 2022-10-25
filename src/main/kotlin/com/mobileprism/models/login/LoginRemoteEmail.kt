@@ -17,6 +17,11 @@ data class LoginRemoteUsername(
 )
 
 @Serializable
+data class LoginRemoteFind(
+    val login: String,
+)
+
+@Serializable
 data class LoginRemoteRestore(
     val login: String,
     val newPassword: String,

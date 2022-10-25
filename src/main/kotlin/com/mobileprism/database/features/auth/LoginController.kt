@@ -129,4 +129,32 @@ class LoginController() {
 
     }
 
+    suspend fun searchForAccount(call: ApplicationCall) {
+        val restoreRemote = call.receiveModel<LoginRemoteFind>()
+
+        val userDTO =
+            if (restoreRemote.login.isEmail) Users.getUserByEmail(restoreRemote.login)
+            else Users.getUserByLogin(restoreRemote.login)
+
+        if (userDTO == null) {
+            call.respond(
+                FishingResponse(
+                    success = false,
+                    fishingCode = FishingCodes.USERNAME_NOT_FOUND,
+                    httpCode = HttpStatusCode.Accepted.value
+                )
+            )
+            return
+        }
+
+        call.respond(
+            FishingResponse(
+                success = true,
+                fishingCode = FishingCodes.SUCCESS,
+                httpCode = HttpStatusCode.OK.value
+            )
+        )
+        return
+    }
+
 }
