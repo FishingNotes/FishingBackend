@@ -1,5 +1,6 @@
 package com.mobileprism.database.features.auth
 
+import com.mobileprism.database.model.otps.OTPs
 import com.mobileprism.database.model.tokens.Tokens
 import com.mobileprism.database.model.users.Users
 import com.mobileprism.database.receiveModel
@@ -8,7 +9,6 @@ import com.mobileprism.models.register.RegisterRemote
 import com.mobileprism.models.register.RegisterRemoteResponse
 import io.ktor.http.*
 import io.ktor.server.application.*
-import io.ktor.server.request.*
 import io.ktor.server.response.*
 
 class RegisterController {
@@ -48,7 +48,7 @@ class RegisterController {
                 call.respond(HttpStatusCode.Conflict, "User with the same email is already registered but google id is null")
             }
             else -> {
-                val user = Users.createNewUser(registerRemote)
+                val user = Users.createNewGoogleUser(registerRemote)
                 val token = Tokens.createNewTokenForUser(user)
 
                 call.respond(RegisterRemoteResponse(user = user.mapToUserResponse(), token.token))
