@@ -73,6 +73,8 @@ class RestoreController {
             if (remoteConfirm.login.isEmail) Users.getUserByEmail(remoteConfirm.login)
             else Users.getUserByLogin(remoteConfirm.login)
 
+        // TODO: Check for retries (unlimited for now)
+
         if (userDTO == null) {
             call.respond(
                 FishingResponse(
@@ -86,15 +88,24 @@ class RestoreController {
 
         val otpDTO = OTPs.findLastUserOTP(userDTO)
 
-        if (otpDTO?.otp == remoteConfirm.otp && otpDTO.isActive) {
-            call.respond(
-                FishingResponse(
-                    success = true,
-                    fishingCode = FishingCodes.SUCCESS,
-                    httpCode = HttpStatusCode.OK.value
+        if (otpDTO?.otp == remoteConfirm.otp) {
+            if (otpDTO.isActive) {
+                call.respond(
+                    FishingResponse(
+                        success = true,
+                        fishingCode = FishingCodes.SUCCESS,
+                        httpCode = HttpStatusCode.OK.value
+                    )
                 )
-            )
-            return
+            } else {
+                call.respond(
+                    FishingResponse(
+                        success = false,
+                        fishingCode = FishingCodes.OTP_ATTEMPTS_EXCEEDED,
+                        httpCode = HttpStatusCode.Accepted.value
+                    )
+                )
+            }
         } else {
             call.respond(
                 FishingResponse(
@@ -136,7 +147,6 @@ class RestoreController {
         return
 
     }
-
 
 
 }
