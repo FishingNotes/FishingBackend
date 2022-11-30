@@ -9,7 +9,6 @@ fun Routing.imagesRouting() {
         get {
             UserImagesController().getAllImages(call)
         }
-
         get("{imageId?}") {
             UserImagesController().getImage(call)
         }

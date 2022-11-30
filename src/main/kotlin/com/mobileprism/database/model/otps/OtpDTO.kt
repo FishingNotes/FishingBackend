@@ -12,6 +12,7 @@ class OtpDTO(id: EntityID<UUID>) : UUIDEntity(id) {
 
     internal var otp by OTPs.otp
     internal var user by UserDTO referencedOn OTPs.user
+    internal var attemptsLeft by OTPs.attemptsLeft
     internal var isActive by OTPs.isActive
     internal var datetimeCreated by OTPs.datetimeCreated
 
