@@ -17,12 +17,18 @@ data class LoginRemoteUsername(
 )
 
 @Serializable
-data class LoginRemoteFind(
+data class RestoreRemoteFind(
     val login: String,
 )
 
 @Serializable
-data class LoginRemoteRestore(
+data class RestoreRemoteConfirm(
+    val login: String,
+    val otp: Int,
+)
+
+@Serializable
+data class RestoreRemoteReset(
     val login: String,
     val newPassword: String,
 )

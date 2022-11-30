@@ -32,6 +32,19 @@ suspend inline fun validateTokenWithUser(call: ApplicationCall, function: (token
 
     function(token, user)
 }
+
+/*suspend inline fun getTokenWithUser(call: ApplicationCall): Pair<String, UserDTO> {
+    val token = call.request.headers["Fishing-AUTH"]
+
+    if (token.isNullOrBlank() || Tokens.getToken(token)?.isActive != true) {
+        call.respond(HttpStatusCode.Forbidden, "Token $token is not valid")
+
+    } else {
+        val user = Tokens.getUserByToken(token)
+        return token to user
+    }
+
+}*/
 suspend inline fun <reified T : Any> ApplicationCall.receiveModel(): T {
     return try {
         this.receive<T>(typeInfo<T>())

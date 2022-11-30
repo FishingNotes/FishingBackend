@@ -1,11 +1,8 @@
 package com.mobileprism.plugins
 
-import com.mobileprism.database.features.auth.RegisterController
+import com.mobileprism.database.features.auth.*
 import com.mobileprism.database.features.catches.catchesRouting
-import com.mobileprism.database.features.auth.loginRouting
 import com.mobileprism.database.features.markers.markersRouting
-import com.mobileprism.database.features.auth.registrationRouting
-import com.mobileprism.database.features.auth.restoreRouting
 import com.mobileprism.database.features.fish.FishController
 import com.mobileprism.database.features.images.imagesRouting
 import io.ktor.server.routing.*
@@ -22,6 +19,8 @@ fun Application.configureRouting() {
         loginRouting()
         restoreRouting()
         registrationRouting()
+        firebaseMigrateRouting()
+
         markersRouting()
         catchesRouting()
         fishRouting()
