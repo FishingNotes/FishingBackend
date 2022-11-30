@@ -10,8 +10,8 @@ data class FishingResponse(
     val description: String = "",
 )
 
-enum class FishingCodes {
-    SUCCESS,
+enum class FishingCodes(val description: String = "") {
+    SUCCESS("success query"),
     UNKNOWN_ERROR,
     USER_NOT_FOUND,
     USERNAME_NOT_FOUND,

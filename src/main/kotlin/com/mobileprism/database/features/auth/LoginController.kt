@@ -84,6 +84,7 @@ class LoginController() {
     suspend fun loginWithGoogle(call: ApplicationCall) {
         val googleLoginRemote = call.receiveModel<GoogleAuthRemote>()
         val userDTO = Users.getUserByGoogleAuthId(googleLoginRemote.googleAuthId)
+        // TODO: do smth with googleAuthIdToken
 
         when {
             userDTO != null -> {
@@ -98,63 +99,5 @@ class LoginController() {
 
     }
 
-    suspend fun restorePassword(call: ApplicationCall) {
-        val restoreRemote = call.receiveModel<LoginRemoteRestore>()
-
-        val userDTO =
-            if (restoreRemote.login.isEmail) Users.getUserByEmail(restoreRemote.login)
-            else Users.getUserByLogin(restoreRemote.login)
-
-        if (userDTO == null) {
-            call.respond(
-                FishingResponse(
-                    success = false,
-                    fishingCode = FishingCodes.USERNAME_NOT_FOUND,
-                    httpCode = HttpStatusCode.Accepted.value
-                )
-            )
-            return
-        }
-
-        //Set new password for user
-        transaction { userDTO.password = PasswordBCrypt.encrypt(restoreRemote.newPassword.toCharArray()) }
-        call.respond(
-            FishingResponse(
-                success = true,
-                fishingCode = FishingCodes.SUCCESS,
-                httpCode = HttpStatusCode.OK.value
-            )
-        )
-        return
-
-    }
-
-    suspend fun searchForAccount(call: ApplicationCall) {
-        val restoreRemote = call.receiveModel<LoginRemoteFind>()
-
-        val userDTO =
-            if (restoreRemote.login.isEmail) Users.getUserByEmail(restoreRemote.login)
-            else Users.getUserByLogin(restoreRemote.login)
-
-        if (userDTO == null) {
-            call.respond(
-                FishingResponse(
-                    success = false,
-                    fishingCode = FishingCodes.USERNAME_NOT_FOUND,
-                    httpCode = HttpStatusCode.Accepted.value
-                )
-            )
-            return
-        }
-
-        call.respond(
-            FishingResponse(
-                success = true,
-                fishingCode = FishingCodes.SUCCESS,
-                httpCode = HttpStatusCode.OK.value
-            )
-        )
-        return
-    }
 
 }

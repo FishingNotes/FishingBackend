@@ -12,7 +12,9 @@ data class RegisterRemote(
 @Serializable
 data class GoogleAuthRemote(
     val email: String,
-    val googleAuthId: String
+    val googleAuthId: String,
+    val googleAuthIdToken: String,
+    val firebaseAuthId: String?,
 )
 
 
