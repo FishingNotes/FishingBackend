@@ -2,6 +2,7 @@ package com.mobileprism.database.model.images
 
 import com.mobileprism.database.model.users.UserDTO
 import com.mobileprism.database.model.users.UserResponse
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
@@ -25,7 +26,7 @@ class UserImageDTO (id: EntityID<UUID>) : UUIDEntity(id) {
 
 }
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class UserImageResponse(
     val imageId: String,
     val datetimeCreated: String,
