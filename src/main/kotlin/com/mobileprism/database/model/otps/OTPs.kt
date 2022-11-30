@@ -12,6 +12,7 @@ object OTPs : UUIDTable("otps") {
     internal val otp = integer("otp_code")
     internal val user = reference("user", Users)
     internal val isActive = bool("is_active").default(true)
+    internal val attemptsLeft = integer("attempts").default(3)
     internal val datetimeCreated = datetime("datetime_created").default(LocalDateTime.now())
 
     fun createNewOtpForUser(userDTO: UserDTO): OtpDTO {
@@ -25,7 +26,10 @@ object OTPs : UUIDTable("otps") {
 
     fun findLastUserOTP(userDTO: UserDTO): OtpDTO? {
         return transaction {
-            OtpDTO.find { user.eq(userDTO.id) }.maxByOrNull { it.datetimeCreated }
+            OtpDTO.find { user.eq(userDTO.id) }.maxByOrNull { it.datetimeCreated }?.apply {
+                if (isActive) attemptsLeft -= 1
+                if (attemptsLeft < 0) isActive = false
+            }
         }
     }
 

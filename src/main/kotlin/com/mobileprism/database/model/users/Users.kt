@@ -1,6 +1,8 @@
 package com.mobileprism.database.model.users
 
 import at.favre.lib.crypto.bcrypt.BCrypt
+import com.mobileprism.database.model.firebase_restoration.FishingFirebaseUser
+import com.mobileprism.database.model.utils.PasswordBCrypt
 import com.mobileprism.models.register.GoogleAuthRemote
 import com.mobileprism.models.register.RegisterRemote
 import org.jetbrains.exposed.dao.id.UUIDTable
@@ -15,20 +17,35 @@ object Users : UUIDTable("users") {
 
     internal val password = varchar("password", 100).nullable()
 
-    internal val firstName = varchar("first_name", 50).default("")
-    internal val secondName = varchar("second_name", 50).default("")
+    internal val firstName = varchar("first_name", 50).nullable()
+    internal val lastName = varchar("last_name", 50).nullable()
 
     internal val dateTimeRegistered = datetime("datetime_registered").default(LocalDateTime.now())
 
-    internal val googleAuthId = varchar("google_auth_id", 100).nullable()
+    internal val googleAuthId = varchar("google_auth_id", 50).nullable()
+    internal val googlePhotoUrl = varchar("google_photo_url", 150).nullable()
+
+    internal val firebaseAuthId = varchar("firebase_auth_id", 50).nullable()
+
     internal val phoneNumber = varchar("phone_number", 16).nullable()
 
     fun createNewUser(registerRemote: RegisterRemote): UserDTO {
         return transaction {
             UserDTO.new {
                 login = createLoginForUser()
-                password = BCrypt.withDefaults().hashToString(6, registerRemote.password.toCharArray())
-                email = registerRemote.email
+                password = PasswordBCrypt.encrypt(registerRemote.password.toCharArray())
+                email = registerRemote.email.lowercase()
+            }
+        }
+    }
+
+    fun createNewGoogleUser(googleAuthRemote: GoogleAuthRemote): UserDTO {
+        return transaction {
+            UserDTO.new {
+                login = createLoginForUser()
+                email = googleAuthRemote.email.lowercase()
+                googleAuthId = googleAuthRemote.googleAuthId
+                firebaseAuthId = googleAuthRemote.firebaseAuthId
             }
         }
     }
@@ -42,16 +59,7 @@ object Users : UUIDTable("users") {
     }
 
     private fun generateLogin(): String {
-        return "Fisher_" + Random.nextInt(10000, 999999)
-    }
-
-    fun createNewUser(googleAuthRemote: GoogleAuthRemote): UserDTO {
-        return transaction {
-            UserDTO.new {
-                email = googleAuthRemote.email
-                googleAuthId = googleAuthRemote.googleAuthId
-            }
-        }
+        return "Fisher_" + Random.nextInt(0, 1_000_000)
     }
 
     fun getUserByLogin(login: String): UserDTO? {
@@ -62,11 +70,17 @@ object Users : UUIDTable("users") {
 
     fun getUserByEmail(email: String): UserDTO? {
         return transaction {
-            UserDTO.find { Users.email.eq(email) }.firstOrNull()
+            UserDTO.find { Users.email.eq(email.lowercase()) }.firstOrNull()
         }
     }
 
     fun getUserByGoogleAuthId(googleAuthId: String): UserDTO? {
+        return transaction {
+            UserDTO.find { Users.googleAuthId.eq(googleAuthId) }.firstOrNull()
+        }
+    }
+
+    fun restoreFromFirebase(firebaseUser: FishingFirebaseUser) {
         return transaction {
             UserDTO.find { Users.googleAuthId.eq(googleAuthId) }.firstOrNull()
         }
