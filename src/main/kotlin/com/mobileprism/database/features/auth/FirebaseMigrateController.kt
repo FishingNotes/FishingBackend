@@ -79,8 +79,8 @@ class FirebaseMigrateController {
 
         }
         with(user) {
-            googleAuthId = firebaseUser.photoUrl
-            val name = firebaseUser.displayName.split(" ")
+            googleAuthId = restoration.firebaseUser.photoUrl
+            val name = restoration.firebaseUser.displayName.split(" ")
             when (name.size) {
                 1 -> firstName = name.first()
                 2 -> {
@@ -93,9 +93,10 @@ class FirebaseMigrateController {
 
     private fun toNewCatchRemote(catch: UserCatch) =
         with(catch) {
-            NewCatchRemote(
-
-            )
+            // TODO:  
+//            NewCatchRemote(
+//
+//            )
         }
 
 
