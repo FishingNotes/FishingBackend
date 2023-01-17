@@ -1,6 +1,10 @@
 package com.mobileprism.database.model.catches
 
+import com.mobileprism.database.model.images.CatchImageDTO
+import com.mobileprism.database.model.images.CatchImages
 import com.mobileprism.database.model.markers.MarkerDTO
+import com.mobileprism.database.model.markers.MarkerDTO.Companion.referrersOn
+import com.mobileprism.database.model.notes.MarkerNotes
 import com.mobileprism.database.model.users.UserDTO
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass
@@ -14,20 +18,22 @@ class CatchDTO (id: EntityID<UUID>) : UUIDEntity(id) {
     internal var marker by MarkerDTO referencedOn Catches.marker
     internal var user by UserDTO referencedOn Catches.user
     internal var description by Catches.description
-    internal val date by Catches.description
-    internal val dateTimeCreated by Catches.dateTimeCreated
-    internal val dateTimeChanged by Catches.dateTimeChanged
+    internal var dateOfCatch by Catches.description
+    internal var dateTimeCreated by Catches.dateTimeCreated
+    internal var dateTimeChanged by Catches.dateTimeChanged
 
-    internal val noteTitle by Catches.noteTitle
-    internal val noteDescription by Catches.noteDescription
-    internal val noteDateTimeCreated by Catches.noteDateTimeCreated
+    internal val images by CatchImageDTO referrersOn CatchImages.catch
 
-    /*internal val fishType by Catches.description
-    internal val fishAmount by Catches.description
-    internal val fishWeight by Catches.description
-    internal val fishingRod by Catches.description
-    internal val fishingBait by Catches.description
-    internal val fishingLure by Catches.description*/
+    internal var noteTitle by Catches.noteTitle
+    internal var noteDescription by Catches.noteDescription
+    internal var noteDateTimeCreated by Catches.noteDateTimeCreated
+
+    internal var fishType by Catches.description
+    internal var fishAmount by Catches.description
+    internal var fishWeight by Catches.description
+    internal var fishingRod by Catches.description
+    internal var fishingBait by Catches.description
+    internal var fishingLure by Catches.description
     //FISHING DATA
 
     internal val isPublic by Catches.description
