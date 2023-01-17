@@ -3,10 +3,14 @@ package com.mobileprism.database.model.catches
 import com.mobileprism.database.features.catches.NewCatchRemote
 import com.mobileprism.database.model.catches.util_tables.FishType
 import com.mobileprism.database.model.markers.MarkerDTO
+import com.mobileprism.database.model.markers.MarkerDTO.Companion.referrersOn
 import com.mobileprism.database.model.markers.UserMarkers
+import com.mobileprism.database.model.notes.MarkerNoteDTO
+import com.mobileprism.database.model.notes.MarkerNotes
 import com.mobileprism.database.model.users.UserDTO
 import com.mobileprism.database.model.users.Users
-import com.mobileprism.database.model.weather.MainWeather
+import com.mobileprism.database.model.utils.toLocalDate
+import com.mobileprism.database.model.utils.toLocalDateTime
 import org.jetbrains.exposed.dao.id.UUIDTable
 import org.jetbrains.exposed.sql.javatime.date
 import org.jetbrains.exposed.sql.javatime.datetime
@@ -19,7 +23,7 @@ object Catches : UUIDTable("catches") {
     internal val marker = reference("marker", UserMarkers)
     internal val user = reference("user", Users)
     internal val description = varchar("description", 500)
-    internal val date = date("date").default(LocalDate.now())
+    internal val dateOfCatch = date("date").default(LocalDate.now())
     internal val dateTimeCreated = datetime("datetime_created").default(LocalDateTime.now())
     internal val dateTimeChanged = datetime("datetime_changed").default(LocalDateTime.now())
 
@@ -39,9 +43,8 @@ object Catches : UUIDTable("catches") {
 
     internal val isPrivate = bool("is_private")
 
-    //private val downloadPhotoLinks: List<String> = listOf(),
-
-    internal val weatherMain = reference("weather_main", MainWeather)
+    // TODO: finish enum FishingWeather
+    //internal val weatherMain = enumeration<>()
 
     internal val weatherTemperature = double("weather_temperature")
     internal val weatherWindSpeed = double("weather_wind_speed")
@@ -51,15 +54,15 @@ object Catches : UUIDTable("catches") {
 
     fun createNewCatch(currentUser: UserDTO, markerDTO: MarkerDTO, newCatchRemote: NewCatchRemote) {
         transaction {
-            CatchDTO.new {
+            /*CatchDTO.new {
                 marker = markerDTO
                 user = currentUser
                 description = newCatchRemote.description
-                /*date = newCatchRemote.date
+                dateOfCatch = newCatchRemote.dateOfCatch.toLocalDate().toString()
                 dateCreated by Catches.description
                 noteTitle = varchar("note_title, 100")
                 noteDescription = varchar("note_description, 500")
-                * noteDateTimeCreated = date("datetime_created").default(LocalDate.now())
+                noteDateTimeCreated = date("datetime_created").default(LocalDate.now())
                 fishType by Catches.description
                 fishAmount by Catches.description
                 fishWeight by Catches.description
@@ -74,8 +77,8 @@ object Catches : UUIDTable("catches") {
                 weatherWindSpeed by Catches.description
                 weatherWindDeg by Catches.description
                 weatherPressure by Catches.description
-                weatherMoonPhase by Catches.description*/
-            }
+                weatherMoonPhase by Catches.description
+            }*/
         }
     }
 
