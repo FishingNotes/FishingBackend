@@ -85,6 +85,7 @@ class LoginController() {
         val googleLoginRemote = call.receiveModel<GoogleAuthRemote>()
         val userDTO = Users.getUserByGoogleAuthId(googleLoginRemote.googleAuthId)
         // TODO: do smth with googleAuthIdToken
+        //todo: if user has not googleId yet?
 
         when {
             userDTO != null -> {

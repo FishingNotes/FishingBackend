@@ -14,20 +14,15 @@ import kotlin.random.Random
 object Users : UUIDTable("users") {
     internal val email = varchar("email", 50)
     internal val login = varchar("login", 20)
-
     internal val password = varchar("password", 100).nullable()
-
     internal val firstName = varchar("first_name", 50).nullable()
     internal val lastName = varchar("last_name", 50).nullable()
-
     internal val dateTimeRegistered = datetime("datetime_registered").default(LocalDateTime.now())
-
     internal val googleAuthId = varchar("google_auth_id", 50).nullable()
     internal val googlePhotoUrl = varchar("google_photo_url", 150).nullable()
-
     internal val firebaseAuthId = varchar("firebase_auth_id", 50).nullable()
-
     internal val phoneNumber = varchar("phone_number", 16).nullable()
+
 
     fun createNewUser(registerRemote: RegisterRemote): UserDTO {
         return transaction {
@@ -38,6 +33,7 @@ object Users : UUIDTable("users") {
             }
         }
     }
+
 
     fun createNewGoogleUser(googleAuthRemote: GoogleAuthRemote): UserDTO {
         return transaction {

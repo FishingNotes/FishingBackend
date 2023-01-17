@@ -8,7 +8,7 @@ fun Routing.restoreRouting() {
 
     val restoreService by inject<RestoreController>()
 
-    route("/restore"){
+    route("/restore") {
         post("search") {
             restoreService.searchForAccount(call)
         }

@@ -5,6 +5,7 @@ import com.mobileprism.database.model.images.UserImageDTO
 import com.mobileprism.database.model.images.UserImages
 import io.ktor.http.*
 import io.ktor.http.content.*
+import io.ktor.server.http.content.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -29,6 +30,7 @@ class UserImagesController() {
                     is PartData.FormItem -> {
                         fileDescription = part.value
                     }
+
                     is PartData.FileItem -> {
                         //fileName = part.originalFileName as String
                         val fileBytes = part.streamProvider().readBytes()
@@ -42,6 +44,7 @@ class UserImagesController() {
                         File(imagesDirectory, "${fileName}.png").writeBytes(fileBytes)
 
                     }
+
                     else -> {
                         call.respond(HttpStatusCode.ExpectationFailed, "Error occurred")
                     }

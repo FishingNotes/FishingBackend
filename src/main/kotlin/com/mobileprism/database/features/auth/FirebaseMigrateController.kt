@@ -3,6 +3,7 @@ package com.mobileprism.database.features.auth
 
 import com.mobileprism.database.features.catches.NewCatchRemote
 import com.mobileprism.database.features.markers.NewMarkerRemote
+import com.mobileprism.database.model.catches.util_tables.FishType
 import com.mobileprism.database.model.firebase_restoration.FirebaseRestoration
 import com.mobileprism.database.model.firebase_restoration.FishingFirebaseUser
 import com.mobileprism.database.model.firebase_restoration.UserCatch
@@ -21,6 +22,9 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import org.jetbrains.exposed.sql.transactions.transaction
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 
 
 class FirebaseMigrateController {
@@ -28,9 +32,8 @@ class FirebaseMigrateController {
     suspend fun restorePassword(call: ApplicationCall) {
         val restoreRemote = call.receiveModel<RestoreRemoteReset>()
 
-        val userDTO =
-            if (restoreRemote.login.isEmail) Users.getUserByEmail(restoreRemote.login)
-            else Users.getUserByLogin(restoreRemote.login)
+        val userDTO = if (restoreRemote.login.isEmail) Users.getUserByEmail(restoreRemote.login)
+        else Users.getUserByLogin(restoreRemote.login)
 
         if (userDTO == null) {
             call.respond(
@@ -47,9 +50,7 @@ class FirebaseMigrateController {
         transaction { userDTO.password = PasswordBCrypt.encrypt(restoreRemote.newPassword.toCharArray()) }
         call.respond(
             FishingResponse(
-                success = true,
-                fishingCode = FishingCodes.SUCCESS,
-                httpCode = HttpStatusCode.OK.value
+                success = true, fishingCode = FishingCodes.SUCCESS, httpCode = HttpStatusCode.OK.value
             )
         )
         return
@@ -61,8 +62,7 @@ class FirebaseMigrateController {
         validateTokenWithUser(call) { token, user ->
             restoreUserFromFirebase(user, firebaseRestorationRemote.firebaseUser)
             restoreMarkersAndCatchesFromFirebase(
-                user,
-                firebaseRestorationRemote
+                user, firebaseRestorationRemote
             )
         }
     }
@@ -91,28 +91,43 @@ class FirebaseMigrateController {
         }
     }
 
-    private fun toNewCatchRemote(catch: UserCatch) =
-        with(catch) {
-            // TODO:  
-//            NewCatchRemote(
-//
-//            )
-        }
+    private fun toNewCatchRemote(catch: UserCatch) = with(catch) {
+        NewCatchRemote(
+            description = description,
+            note = note.description,
+            dateOfCatch = LocalDateTime.ofInstant(Instant.ofEpochMilli(date), ZoneId.systemDefault()).toString(),
+            dateOfCreation = LocalDateTime.ofInstant(Instant.ofEpochMilli(dateOfCreation), ZoneId.systemDefault())
+                .toString(),
+            fishTypeId = FishType.findByString(fishType)?.id?.value,
+            fishAmount = fishAmount,
+            fishWeight = fishWeight,
+            fishingRodType = fishingRodType,
+            fishingBait = fishingBait,
+            fishingLure = fishingLure,
+            isPublic = isPublic,
+            downloadPhotoLinks = listOf(),
+            weather = weather,
+            weatherTemperature = weatherTemperature,
+            weatherWindSpeed = weatherWindSpeed,
+            weatherWindDeg = weatherWindDeg,
+            weatherPressure = weatherPressure,
+            weatherMoonPhase = weatherMoonPhase,
+        )
+    }
 
 
-    private fun toNewMarkerRemote(firebaseMarker: UserMapMarker) =
-        with(firebaseMarker) {
-            NewMarkerRemote(
-                latitude = latitude,
-                longitude = longitude,
-                title = title,
-                description = description,
-                markerColor = markerColor,
-                datetimeCreated = dateOfCreation.toLocalDateTime().toString(),
-                visible = visible,
-                private = public.not()
-            )
-        }
+    private fun toNewMarkerRemote(firebaseMarker: UserMapMarker) = with(firebaseMarker) {
+        NewMarkerRemote(
+            latitude = latitude,
+            longitude = longitude,
+            title = title,
+            description = description,
+            markerColor = markerColor,
+            datetimeCreated = dateOfCreation.toLocalDateTime().toString(),
+            visible = visible,
+            private = public.not()
+        )
+    }
 
     private fun restoreUserFromFirebase(user: UserDTO, firebaseUser: FishingFirebaseUser) {
         transaction {
@@ -120,11 +135,12 @@ class FirebaseMigrateController {
                 googleAuthId = firebaseUser.photoUrl
                 val name = firebaseUser.displayName.split(" ")
                 when (name.size) {
-                    1 -> firstName = name.first()
                     2 -> {
                         firstName = name.first()
                         lastName = name.last()
                     }
+
+                    else -> firstName = name.first()
                 }
             }
         }
