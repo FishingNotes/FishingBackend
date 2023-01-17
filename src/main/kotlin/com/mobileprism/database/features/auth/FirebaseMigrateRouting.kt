@@ -8,7 +8,7 @@ fun Routing.firebaseMigrateRouting() {
 
     val migrateService by inject<FirebaseMigrateController>()
 
-    route("/firebase"){
+    route("/firebase") {
         post("migration") {
             migrateService.migrate(call)
         }

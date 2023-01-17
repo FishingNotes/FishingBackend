@@ -6,6 +6,8 @@ RUN gradle shadowJar --no-daemon
 FROM openjdk:11
 EXPOSE 8080:8080
 EXPOSE 8443:8443
+# mark it with a label, so we can remove dangling images
+LABEL cicd="fishingweb"
 RUN mkdir /app
 COPY --from=build /home/gradle/src/build/libs/*.jar /app/fishingbackend.jar
 COPY /fishing.jks /app

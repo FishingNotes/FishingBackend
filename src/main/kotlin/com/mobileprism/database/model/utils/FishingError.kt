@@ -19,7 +19,7 @@ enum class FishingCodes(val description: String = "") {
     OTP_NOT_FOUND,
     NETWORK_ERROR,
     OTP_ATTEMPTS_EXCEEDED,
-
+    EMAIL_ALREADY_EXISTS
 
 }
 
