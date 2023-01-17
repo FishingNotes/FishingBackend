@@ -34,3 +34,8 @@ out/
 
 ### VS Code ###
 .vscode/
+/fishing.jks
+.env
+/tmp/db/
+/pgadmin/
+/.run/
