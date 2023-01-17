@@ -6,24 +6,21 @@ import org.koin.ktor.ext.inject
 
 fun Routing.loginRouting() {
 
-    val loginService by inject<LoginController>()
-    val restoreService by inject<RestoreController>()
-
-    route("/login"){
+    route("/login") {
         post("username") {
-            loginService.loginWithUsername(call)
+            LoginController().loginWithUsername(call)
         }
         post("email") {
-            loginService.loginWithEmail(call)
+            LoginController().loginWithEmail(call)
         }
         post("google") {
-            loginService.loginWithGoogle(call)
-        }
-        post("search-account") {
-            restoreService.searchForAccount(call)
+            LoginController().loginWithGoogle(call)
         }
         post("restore") {
-            restoreService.restorePassword(call)
+            RestoreController().restorePassword(call)
         }
     }
 }
+
+
+

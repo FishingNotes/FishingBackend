@@ -16,11 +16,13 @@ fun Application.configureRouting() {
             call.respondText("Hello Fishing!")
         }
 
+        //Auth routes
         loginRouting()
-        restoreRouting()
         registrationRouting()
+        restoreRouting()
         firebaseMigrateRouting()
 
+        //Main routes
         markersRouting()
         catchesRouting()
         fishRouting()

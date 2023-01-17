@@ -5,6 +5,7 @@ import com.mobileprism.database.model.markers.MarkerResponse
 import com.mobileprism.database.model.notes.NoteResponse
 import com.mobileprism.database.model.users.UserDTO
 import com.mobileprism.database.model.users.UserResponse
+import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.IntEntity
 import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.UUIDEntity
@@ -32,7 +33,7 @@ class FishTypeDTO(id: EntityID<Int>) : IntEntity(id) {
 
 }
 
-@kotlinx.serialization.Serializable
+@Serializable
 data class FishTypeResponse(
     val id: Int,
     val latName: String,
