@@ -6,8 +6,8 @@ services:
     build: .
     image: fishingweb:latest
     ports:
-      - "8080:8080"
-      - "8443:8443"
+      - "${PORT}:${PORT}"
+      - "${PORT_SSL}:${PORT_SSL}"
     environment:
       - JDBC_URL=${JDBC_URL}
       - PORT=${PORT}
