@@ -31,7 +31,7 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "5434:5434"
+      - "${PGPORT}:${PGPORT}"
     command:
       -p ${PGPORT}
     healthcheck:
