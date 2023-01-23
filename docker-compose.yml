@@ -2,7 +2,7 @@
 services:
   web:
     volumes:
-      - ./db/images:/images
+      - ${HOME_DIR}/images:/images
     build: .
     image: fishingweb:latest
     ports:
@@ -23,7 +23,7 @@ services:
   db:
     image: postgres
     volumes:
-      - ./db/postgres:/var/lib/postgresql/data
+      - ${HOME_DIR}/postgres:/var/lib/postgresql/data
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
@@ -42,13 +42,13 @@ services:
 
   pgadmin:
     image: dpage/pgadmin4:latest
+    volumes:
+      - ${HOME_DIR}/pgadmin:/var/lib/pgadmin
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       PGADMIN_DEFAULT_EMAIL: "fishingnotesru@gmail.com"
       PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_PASSWORD}
       PGADMIN_CONFIG_SERVER_MODE: "False"
-    volumes:
-      - ./db/pgadmin:/var/lib/pgadmin
     ports:
       - "5080:80"
     command:
@@ -66,7 +66,7 @@ services:
     image: prodrigestivill/postgres-backup-local
     restart: always
     volumes:
-      - ./db/backup:/backups
+      - ${HOME_DIR}/backup:/backups
     links:
       - db:db
     depends_on:
