@@ -6,12 +6,10 @@ services:
     build: .
     image: fishingweb:latest
     ports:
-      - "${PORT}:80"
+      - "${PORT}:8080"
       - "${PORT_SSL}:8443"
     environment:
       - JDBC_URL=${JDBC_URL}
-      - PORT=${PORT}
-      - PORT_SSL=${PORT_SSL}
       - JKS_ALIAS=${JKS_ALIAS}
       - JKS_PASS=${JKS_PASS}
     depends_on:
@@ -31,11 +29,11 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "${PGPORT}:5432"
+      - "${POSTGRES_PORT}:5432"
 #    command:
 #      -p ${PGPORT}
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -p ${PGPORT}" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -p 5432" ]
       interval: 1s
     networks:
       - postgres
@@ -47,11 +45,11 @@ services:
 #    user: root
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
-      PGADMIN_DEFAULT_EMAIL: "fishingnotesru@gmail.com"
+      PGADMIN_DEFAULT_EMAIL: "${PGADMIN_DEFAULT_EMAIL}"
       PGADMIN_DEFAULT_PASSWORD: ${POSTGRES_PASSWORD}
       PGADMIN_CONFIG_SERVER_MODE: "False"
     ports:
-      - "5080:80"
+      - "${PGADMIN_PORT}:80"
 #    command:
 #      -p ${PGPORT}
     restart: unless-stopped
@@ -72,11 +70,9 @@ services:
       - ${HOME_DIR}/backup:/backups
     links:
       - db:db
-    depends_on:
-      - db
     environment:
       POSTGRES_HOST: ${POSTGRES_HOST}
-      POSTGRES_PORT: ${PGPORT}
+#      POSTGRES_PORT: 5432
       POSTGRES_DB: ${POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -86,6 +82,8 @@ services:
       BACKUP_KEEP_WEEKS: 4
       BACKUP_KEEP_MONTHS: 6
       HEALTHCHECK_PORT: 81
+    depends_on:
+      - db
     networks:
       - postgres
 
