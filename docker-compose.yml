@@ -32,8 +32,8 @@ services:
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
       - "${PGPORT}:5432"
-    command:
-      -p ${PGPORT}
+#    command:
+#      -p ${PGPORT}
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready -U postgres -p ${PGPORT}" ]
       interval: 1s
@@ -52,8 +52,8 @@ services:
       PGADMIN_CONFIG_SERVER_MODE: "False"
     ports:
       - "5080:80"
-    command:
-      -p ${PGPORT}
+#    command:
+#      -p ${PGPORT}
     restart: unless-stopped
 #    deploy:
 #      resources:
