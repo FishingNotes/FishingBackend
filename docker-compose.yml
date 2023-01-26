@@ -6,8 +6,8 @@ services:
     build: .
     image: fishingweb:latest
     ports:
-      - "${PORT}:${PORT}"
-      - "${PORT_SSL}:${PORT_SSL}"
+      - "${PORT}:80"
+      - "${PORT_SSL}:8443"
     environment:
       - JDBC_URL=${JDBC_URL}
       - PORT=${PORT}
@@ -31,11 +31,11 @@ services:
       POSTGRES_HOST: ${POSTGRES_HOST}
       POSTGRES_HOST_AUTH_METHOD: trust
     ports:
-      - "${PGPORT}:${PGPORT}"
+      - "${PGPORT}:5432"
     command:
       -p ${PGPORT}
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U postgres -p 5434" ]
+      test: [ "CMD-SHELL", "pg_isready -U postgres -p ${PGPORT}" ]
       interval: 1s
     networks:
       - postgres
@@ -44,6 +44,7 @@ services:
     image: dpage/pgadmin4:latest
     volumes:
       - ${HOME_DIR}/pgadmin:/var/lib/pgadmin
+#    user: root
     environment:
       POSTGRES_DB: ${POSTGRES_DB}
       PGADMIN_DEFAULT_EMAIL: "fishingnotesru@gmail.com"
@@ -59,6 +60,8 @@ services:
 #        limits:
 #          cpus: '0.5'
 #          memory: 0.5G
+    depends_on:
+      - db
     networks:
       - postgres
 
