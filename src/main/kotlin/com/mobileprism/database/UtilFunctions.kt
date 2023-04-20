@@ -7,6 +7,7 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.util.reflect.*
+import org.jetbrains.exposed.sql.*
 import java.util.UUID
 
 suspend inline fun validateToken(call: ApplicationCall, function: (token: String) -> Unit) {
@@ -96,3 +97,8 @@ suspend inline fun parametersRequired(
 
     function(parametersArray)
 }
+
+class InsensitiveLikeOp(expr1: Expression<*>, expr2: Expression<*>) : ComparisonOp(expr1, expr2, "ILIKE")
+
+infix fun <T : String?> ExpressionWithColumnType<T>.ilike(pattern: String): Op<Boolean> =
+    InsensitiveLikeOp(this, QueryParameter(pattern, columnType))
