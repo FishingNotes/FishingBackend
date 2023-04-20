@@ -1,6 +1,5 @@
 package com.mobileprism.database.model.users
 
-import com.mobileprism.database.model.firebase_restoration.FishingFirebaseUser
 import kotlinx.serialization.Serializable
 import org.jetbrains.exposed.dao.UUIDEntity
 import org.jetbrains.exposed.dao.UUIDEntityClass

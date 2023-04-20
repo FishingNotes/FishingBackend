@@ -1,6 +1,7 @@
 package com.mobileprism.database.model.users
 
 import at.favre.lib.crypto.bcrypt.BCrypt
+import com.mobileprism.database.ilike
 import com.mobileprism.database.model.firebase_restoration.FishingFirebaseUser
 import com.mobileprism.database.model.utils.PasswordBCrypt
 import com.mobileprism.models.register.GoogleAuthRemote
@@ -42,6 +43,7 @@ object Users : UUIDTable("users") {
                 email = googleAuthRemote.email.lowercase()
                 googleAuthId = googleAuthRemote.googleAuthId
                 firebaseAuthId = googleAuthRemote.firebaseAuthId
+                googlePhotoUrl = googleAuthRemote.googlePhotoUrl
             }
         }
     }
@@ -66,7 +68,7 @@ object Users : UUIDTable("users") {
 
     fun getUserByEmail(email: String): UserDTO? {
         return transaction {
-            UserDTO.find { Users.email.eq(email.lowercase()) }.firstOrNull()
+            UserDTO.find { Users.email.ilike(email) }.firstOrNull()
         }
     }
 
