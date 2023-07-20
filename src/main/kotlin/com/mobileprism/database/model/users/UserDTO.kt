@@ -28,7 +28,8 @@ class UserDTO(id: EntityID<UUID>) : UUIDEntity(id) {
             secondName = lastName,
             email = email,
             dateTimeRegistered = dateTimeRegistered.toString(),
-            phoneNumber = phoneNumber
+            phoneNumber = phoneNumber,
+            photoUrl = googlePhotoUrl,
         )
     }
 
@@ -43,5 +44,6 @@ data class UserResponse(
     val secondName: String?,
     val email: String,
     val dateTimeRegistered: String,
-    val phoneNumber: String?
+    val phoneNumber: String?,
+    val photoUrl: String?,
 )
